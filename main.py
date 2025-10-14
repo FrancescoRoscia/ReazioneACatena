@@ -11,7 +11,7 @@ from kivy.uix.button import Button
 
 class MyApp(App):
     def build(self):
-        return Button(text="Ciao Sisio!")
+        return Button(text="Ciao Ilaria!")
         
 if __name__ == "__main__":
     MyApp().run()
