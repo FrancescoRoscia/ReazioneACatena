@@ -31,7 +31,7 @@ class MyApp(App):
         buttonRst.bind(on_press=self.resetGame)
 
         labelParola = Label(text="Parola Da Indovinare", font_size=28)
-        self.labelTempo = Label(text=str(self.timer), font_size=30)
+        self.labelTempo = Label(text=f"Tempo: {self.timer}", font_size=30)
         self.labelPunteggio = Label(text=str(self.punteggio), font_size = 30)
         self.labelPasso = Label(text=str(self.nPasso), font_size = 30)
 
@@ -87,10 +87,10 @@ class MyApp(App):
             self.buttonSS.text = "Ferma"
             self.timer_running = True
             if self.timerName is None:
-                self.timerName = Clock.schedule_interval(self.updateTimer, 1)
+                self.timerName = Clock.schedule_interval(self.updateTimer, 1) # creo un'istanza di timer
             else:
-                Clock.schedule_interval(self.updateTimer, 1)
-        else:
+                Clock.schedule_interval(self.updateTimer, 1) # non creo nuove istanze ma modifico quella gia esistente
+        else: 
             # Ferma temporaneamente
             self.buttonSS.text = "Riprendi"
             self.timer_running = False
