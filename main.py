@@ -22,7 +22,9 @@ class MyApp(App):
         self.nPasso = 3
         self.timer = 60
         self.timer_running = False 
-        self.timerName = None      
+        self.timerName = None
+        self.canChange = False #variabile booleana se il punteggio può cambiare
+        self.canPass = False #variabile booleana se si può utilizzare il passo
 
 
         layout = BoxLayout(orientation='vertical', padding=30, spacing=20)  # disposizione verticale
@@ -68,33 +70,49 @@ class MyApp(App):
     
 
     def addPoint(self, instance):
-        self.punteggio += 1
-        self.labelPunteggio.text = str(self.punteggio)
+        if(self.canChange == True):
+            self.punteggio += 1
+            self.labelPunteggio.text = str(self.punteggio)
+            self.canChange = False
+            self.stopTimer() 
 
     def removePoint(self, instance):
-        if(self.punteggio >= 1):
+        if(self.punteggio >= 1 and self.canChange == True):
             self.punteggio -= 1
             self.labelPunteggio.text = str(self.punteggio)
+        
+        self.canChange = False
+        self.stopTimer()
 
     def passaParola(self, instance):
-        if(self.nPasso >= 1):
+        if(self.nPasso >= 1 and self.canPass == True):
             self.nPasso -= 1
             self.labelPasso.text = str(self.nPasso)
+            self.canChange = False
+            self.canPass = False
+            self.stopTimer()
     
     def toggleTimer(self, instance):
         if(self.timer_running == False):
             # Avvia o riprende il timer
             self.buttonSS.text = "Ferma"
             self.timer_running = True
+            self.canChange = True
+            self.canPass = True
             if self.timerName is None:
                 self.timerName = Clock.schedule_interval(self.updateTimer, 1) # creo un'istanza di timer
             else:
                 Clock.schedule_interval(self.updateTimer, 1) # non creo nuove istanze ma modifico quella gia esistente
         else: 
             # Ferma temporaneamente
-            self.buttonSS.text = "Riprendi"
-            self.timer_running = False
-            Clock.unschedule(self.updateTimer)
+            self.stopTimer()
+ 
+
+    def stopTimer(self):
+        self.buttonSS.text = "Riprendi"
+        self.timer_running = False
+        self.canPass = False
+        Clock.unschedule(self.updateTimer)
 
     def updateTimer(self, second):
         if self.timer > 0:
