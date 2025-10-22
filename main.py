@@ -4,16 +4,9 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
 
-# 1) TROVARE PAROLE 
-# 2) INTERFACCIA GRAFICA (Parola da indovinare, Stop, Giusta, Sbagliata, Punteggio, Timer, Numero Passo, Reset)
-# 3) GESTIONE PUNTEGGIO (3 passi, sbagli -1, giusta +1, passo 0)
-# 4) GESTIONE TEMPO
+# 1) TROVARE PAROLE (controllate fino a riga 100) (quelle separate da spazio le ho aggiunte io)
 
-# 5) RADDOPPIO (Tasto visibile solo quando possibile)(Bonus)
-# 6) PUNTEGGIO CONTINUATIVO (somma punteggio di più turni) 
-
-# Aggiungere il fatto che se è finito il tempo non ti puoi aggiungere punteggio
-
+# 5) RADDOPPIO (Tasto visibile solo quando possibile)(MAX 2 volte a partita)
 
 class MyApp(App):
 
