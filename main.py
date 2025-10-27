@@ -3,6 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
+import random
 
 # 1) TROVARE PAROLE (controllate fino a riga 100) (quelle separate da spazio le ho aggiunte io)
 # 5) RADDOPPIO (Tasto visibile solo quando possibile)(MAX 2 volte a partita)
@@ -10,6 +11,11 @@ from kivy.clock import Clock
 class MyApp(App):
 
     def build(self):
+        file = open("C:\\Users\\franc\\Desktop\\POLITO\\Progetto Reazione a catena\\ReazioneACatena\\parole.txt", "r", encoding="utf-8")
+        self.listaIniziale = [line.strip() for line in file if line.strip()]
+        file.close()
+        self.setTrovate = set()
+        
         self.punteggio = 0 #mettendo self.variabile si crea un attributo dell'oggetto (come in Java)
         self.nPasso = 3
         self.timer = 60
@@ -24,7 +30,7 @@ class MyApp(App):
         buttonRst = Button(text = "Reset", size_hint=(0.33, None), pos_hint={'center_x': 0.5})
         buttonRst.bind(on_press=self.resetGame)
 
-        labelParola = Label(text="Parola Da Indovinare", font_size=28)
+        self.labelParola = Label(text="Parola Da Indovinare", font_size=28)
         self.labelTempo = Label(text=f"Tempo: {self.timer}", font_size=30)
         self.labelPunteggio = Label(text=str(self.punteggio), font_size = 30)
         self.labelPasso = Label(text=str(self.nPasso), font_size = 30)
@@ -53,7 +59,7 @@ class MyApp(App):
         layoutButtons.add_widget(buttonRight)
 
         layout.add_widget(buttonRst)
-        layout.add_widget(labelParola)
+        layout.add_widget(self.labelParola)
         layout.add_widget(self.labelTempo)
         layout.add_widget(layoutPuntPas)
         layout.add_widget(layoutButtons)
@@ -87,6 +93,8 @@ class MyApp(App):
     def toggleTimer(self, instance):
         if(self.timer_running == False):
             # Avvia o riprende il timer
+            parola = self.scegliParola() #scelta parola random
+            self.labelParola.text = str(parola)
             self.buttonSS.text = "Ferma"
             self.timer_running = True
             self.canChange = True
@@ -99,6 +107,12 @@ class MyApp(App):
             # Ferma temporaneamente
             self.stopTimer()
  
+    def scegliParola(self):
+        parola = random.choice(self.listaIniziale)
+        while parola in self.setTrovate:
+            parola = random.choice(self.listaIniziale)
+        self.setTrovate.add(parola)
+        return parola.capitalize()
 
     def stopTimer(self):
         self.buttonSS.text = "Riprendi"
@@ -124,6 +138,7 @@ class MyApp(App):
         self.timer_running = False
         self.timerName = None
         self.labelPunteggio.text = str(self.punteggio)
+        self.labelParola.text = "Parola Da Indovinare"
         self.labelPasso.text = str(self.nPasso)
         self.labelTempo.text = f"Tempo: {self.timer}"
         self.buttonSS.text = "Inizia"
