@@ -5,7 +5,6 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
 
 # 1) TROVARE PAROLE (controllate fino a riga 100) (quelle separate da spazio le ho aggiunte io)
-
 # 5) RADDOPPIO (Tasto visibile solo quando possibile)(MAX 2 volte a partita)
 
 class MyApp(App):
