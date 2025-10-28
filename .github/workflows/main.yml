@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build APK
 
 on:
   push:
@@ -11,30 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      # Install dependencies (Python, JDK, Build tools, etc.)
-      - name: Install dependencies
+      - name: Set up dependencies
         run: |
-          sudo apt update
-          sudo apt install -y python3-pip build-essential git zip unzip openjdk-17-jdk android-sdk wget
-          pip install buildozer cython
+          sudo apt-get update
+          sudo apt-get install -y python3-pip zip unzip openjdk-17-jdk
 
-      # Install Android SDK command-line tools (to fix 'aidl not found')
-      - name: Install Android SDK tools manually
+      - name: Install Buildozer with break-system-packages
         run: |
-          sudo mkdir -p /usr/lib/android-sdk/cmdline-tools
-          cd /usr/lib/android-sdk/cmdline-tools
-          sudo wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          sudo unzip -q commandlinetools-linux-9477386_latest.zip
-          sudo mkdir -p /usr/lib/android-sdk/cmdline-tools/latest
-          sudo mv cmdline-tools/* /usr/lib/android-sdk/cmdline-tools/latest/
-          export PATH=$PATH:/usr/lib/android-sdk/cmdline-tools/latest/bin
-          yes | sudo /usr/lib/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          sudo /usr/lib/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+          pip install --break-system-packages --upgrade git+https://github.com/kivy/buildozer.git@master
 
-      # Cache Buildozer builds to speed up next runs
       - name: Cache Buildozer global directory
         uses: actions/cache@v3
         with:
@@ -46,19 +33,11 @@ jobs:
           path: .buildozer
           key: ${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
 
-      # Run Buildozer to create the APK
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        with:
-          command: buildozer android debug
-          buildozer_version: master
-          extra_requirements: "--break-system-packages"
-        env:
-          USER: root  # evita errore "invalid user"
+      - name: Build APK
+        run: buildozer android debug
 
-      # Upload the generated APK file as an artifact
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
+          name: app-apk
           path: bin/*.apk
