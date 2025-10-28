@@ -52,6 +52,7 @@ jobs:
         with:
           command: buildozer android debug
           buildozer_version: master
+          extra_requirements: "--break-system-packages"
         env:
           USER: root  # evita errore "invalid user"
 
