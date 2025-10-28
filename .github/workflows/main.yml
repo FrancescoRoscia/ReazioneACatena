@@ -32,12 +32,14 @@ jobs:
           path: .buildozer
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
 
-      - name: Build with Buildozer (patched)
-        uses: ArtemSBulgakov/buildozer-action@v1.2
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
           command: buildozer android debug
           buildozer_version: master
+        env:
+          USER: runner
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
