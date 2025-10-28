@@ -3,8 +3,6 @@ name: Build APK
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -13,36 +11,30 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip zip unzip openjdk-17-jdk
+          sudo apt-get install -y python3-pip zip unzip openjdk-17-jdk wget git
 
-      - name: Install Buildozer with system flag
+      - name: Install Buildozer
         run: |
           pip install --break-system-packages --upgrade git+https://github.com/kivy/buildozer.git@master
 
-      - name: Install Android SDK manually and accept licenses
+      - name: Setup Android SDK
         run: |
-          mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
-          cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
+          ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
+          mkdir -p $ANDROID_HOME/cmdline-tools
+          cd $ANDROID_HOME/cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
           unzip commandlinetools-linux-11076708_latest.zip
-          mkdir latest
+          mkdir -p latest
           mv cmdline-tools/* latest/
-          yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "build-tools;36.1.0" "platforms;android-34"
-
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v3
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
-
-      - uses: actions/cache@v3
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          # Create symlink in the old path Buildozer expects
+          mkdir -p $ANDROID_HOME/tools
+          ln -s $ANDROID_HOME/cmdline-tools/latest $ANDROID_HOME/tools/cmdline-tools
+          # Accept licenses and install build-tools
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;36.1.0" "platforms;android-34"
 
       - name: Build APK
         run: |
