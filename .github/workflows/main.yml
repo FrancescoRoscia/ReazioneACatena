@@ -32,7 +32,7 @@ jobs:
           path: .buildozer
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
 
-      - name: Build with Buildozer
+      - name: Build with Buildozer (patched)
         uses: ArtemSBulgakov/buildozer-action@v1.2
         id: buildozer
         with:
