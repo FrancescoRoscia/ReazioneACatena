@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y python3-pip build-essential git zip unzip openjdk-17-jdk
+          sudo apt install -y python3-pip build-essential git zip unzip openjdk-17-jdk android-sdk
           pip install buildozer cython
 
       - name: Initialize Buildozer
