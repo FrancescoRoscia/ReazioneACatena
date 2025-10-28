@@ -4,6 +4,7 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
 import random
+import os
 
 # 1) TROVARE PAROLE (controllate fino a riga 100) (quelle separate da spazio le ho aggiunte io)
 # 5) RADDOPPIO (Tasto visibile solo quando possibile)(MAX 2 volte a partita)
@@ -11,7 +12,9 @@ import random
 class MyApp(App):
 
     def build(self):
-        file = open("C:\\Users\\franc\\Desktop\\POLITO\\Progetto Reazione a catena\\ReazioneACatena\\parole.txt", "r", encoding="utf-8")
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(base_path, "parole.txt")
+        file = open(file_path, "r", encoding="utf-8")
         self.listaIniziale = [line.strip() for line in file if line.strip()]
         file.close()
         self.setTrovate = set()
