@@ -29,11 +29,12 @@ jobs:
           unzip commandlinetools-linux-11076708_latest.zip
           mkdir -p latest
           mv cmdline-tools/* latest/
-          # Create symlink in the old path Buildozer expects
+          # Link simbolico nel percorso che Buildozer cerca
           mkdir -p $ANDROID_HOME/tools
           ln -s $ANDROID_HOME/cmdline-tools/latest $ANDROID_HOME/tools/cmdline-tools
-          # Accept licenses and install build-tools
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          # Accettare licenze
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+          # Installare build-tools e platform
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;36.1.0" "platforms;android-34"
 
       - name: Build APK
